@@ -4,6 +4,7 @@ from Utils.dataset import generar_dataset
 from metodos.list_methods import ListMethods
 from metodos.pandas_methods import PandasMethods
 from metodos.sqlite_methods import SQLiteMethods
+from metodos.redis_methods import MetodoRedis
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -54,6 +55,20 @@ def ejecutar_un_tamano(n, indice_repeticion):
     resultados.append(("sqlite", n, indice_repeticion, "filtrar", tiempo_filtrar_s, pico_filtrar_s, "OK"))
 
     sql.cerrar()
+
+    
+    # 4) REDIS
+    redis = MetodoRedis()
+    _, tiempo_insertar_r, pico_insertar_r = redis.insertar_todo(dataset)
+    resultados.append(("redis", n, indice_repeticion, "insertar", tiempo_insertar_r, pico_insertar_r, "OK"))
+
+    _, tiempo_buscar_r, pico_buscar_r = redis.buscar_por_codigo(SEARCH_KEY)
+    resultados.append(("redis", n, indice_repeticion, "buscar", tiempo_buscar_r, pico_buscar_r, "OK"))
+
+    _, tiempo_filtrar_r, pico_filtrar_r = redis.filtrar_por_edad(FILTER_CONDITION)
+    resultados.append(("redis", n, indice_repeticion, "filtrar", tiempo_filtrar_r, pico_filtrar_r, "OK"))
+
+    redis.cerrar()
     return resultados
 
 
